@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -13,7 +14,7 @@ static const struct Functions NumberFunctions = {
 
 struct Number {
     const struct Functions *functions;
-    uint8_t value[10];
+    uint8_t value[16];
 };
 
 struct Number *Number_with_value(const void *value, size_t size) {
@@ -124,6 +125,10 @@ struct Number *Number_with_size(size_t value) {
 
 void Number_delete(struct Number *number) {
     free(number);
+}
+
+uint64_t Number_hash(struct Number *number) {
+    return Number_as_u64(number);
 }
 
 bool Number_bool_value(const struct Number *number) {

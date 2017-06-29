@@ -6,6 +6,8 @@
 
 #include "jpclib/collections/Array.h"
 #include "jpclib/core/Functions.h"
+#include "jpclib/hashing/SipHasher.h"
+#include "jpclib/random/OsRng.h"
 
 static const float HashMapLoadFactor = 0.9;
 
@@ -15,6 +17,7 @@ static const struct Functions HashMapFunctions = {
 
 struct HashMap {
     const struct Functions *functions;
+    struct SipHasher *hasher;
     struct Array *table;
     size_t count;
 };
@@ -36,6 +39,8 @@ struct HashMap *HashMap_with_capacity(size_t capacity) {
     map->table = NULL;
     map->hasher = NULL;
     map->count = 0;
+
+    map->hasher = SipHasher_new
 
     // Try to create a new table Array.
     map->table = Array_new();
@@ -81,7 +86,7 @@ void *HashMap_at(const struct HashMap *map, const void *key) {
 }
 
 bool HashMap_insert(struct HashMap *map, void *key, void *value) {
-    
+
 }
 
 bool HashMap_remove(struct HashMap *map, const void *key) {

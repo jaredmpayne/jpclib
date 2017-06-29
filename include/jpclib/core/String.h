@@ -1,5 +1,5 @@
-#ifndef JPCLIB_COLLECTIONS_STRING_H
-#define JPCLIB_COLLECTIONS_STRING_H
+#ifndef JPCLIB_CORE_STRING_H
+#define JPCLIB_CORE_STRING_H
 
 #include <stdbool.h>
 #include <stddef.h>

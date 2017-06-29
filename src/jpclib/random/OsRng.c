@@ -1,4 +1,4 @@
-#include "jpclib/randomness/OsRng.h"
+#include "jpclib/random/OsRng.h"
 
 #include <stddef.h>
 #include <stdint.h>

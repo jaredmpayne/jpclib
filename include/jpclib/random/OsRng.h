@@ -1,5 +1,5 @@
-#ifndef JPCLIB_RANDOMNESS_OSRNG_H
-#define JPCLIB_RANDOMNESS_OSRNG_H
+#ifndef JPCLIB_RANDOM_OS_RNG_H
+#define JPCLIB_RANDOM_OS_RNG_H
 
 #include <stddef.h>
 #include <stdint.h>
