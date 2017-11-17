@@ -16,8 +16,6 @@ void Array_delete(struct Array *array);
 
 bool Array_equals(const struct Array *array, const struct Array *other);
 
-void Array_hash(const struct Array *array, struct SipHasher *hasher);
-
 size_t Array_count(const struct Array *array);
 
 bool Array_is_empty(const struct Array *array);

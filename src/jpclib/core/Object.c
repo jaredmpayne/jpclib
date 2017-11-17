@@ -59,13 +59,3 @@ bool Object_equals(const void *object, const void *other) {
 
     return object1->functions->equals_function(object1, object2);
 }
-
-uint64_t Object_hash(const void *object) {
-    const struct Object *object1 = (const struct Object *)object;
-
-    if (!object1->functions->hash_function) {
-        abort();
-    }
-
-    return object1->functions->hash_function(object1);
-}

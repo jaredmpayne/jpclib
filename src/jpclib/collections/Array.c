@@ -88,12 +88,6 @@ bool Array_equals(const struct Array *array, const struct Array *other) {
     return true;
 }
 
-void Array_hash(const struct Array *array, struct SipHasher *hasher) {
-    for (size_t i = 0; i < Array_count(array); ++i) {
-        Object_hash(Array_at_unsafe(array, i), hasher);
-    }
-}
-
 size_t Array_count(const struct Array *array) {
     return array->count;
 }
