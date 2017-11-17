@@ -9,7 +9,7 @@
 #include "jpclib/core/Object.h"
 #include "jpclib/math/stats.h"
 
-static const float ArrayGrowthFactor = 1.6;
+static const float GrowthFactor = 1.6;
 
 static const struct Functions ArrayFunctions = {
     .copy_function = (CopyFunction)Array_copy,
@@ -24,11 +24,9 @@ struct Array {
     size_t capacity;
 };
 
-struct Array *Array_new() {
-    return Array_with_capacity(0);
-}
+static bool Array_reserve_preemptively(struct Array *array, size_t capacity);
 
-struct Array *Array_with_capacity(size_t capacity) {
+struct Array *Array_new() {
     struct Array *array = malloc(sizeof(struct Array));
     if (!array) {
         return NULL;
@@ -39,7 +37,16 @@ struct Array *Array_with_capacity(size_t capacity) {
     array->count = 0;
     array->capacity = 0;
 
-    if (!Array_reserve_exactly(array, capacity)) {
+    return array;
+}
+
+struct Array *Array_with_capacity(size_t capacity) {
+    struct Array *array = Array_new();
+    if (!array) {
+        return NULL;
+    }
+
+    if (!Array_reserve(array, capacity)) {
         Array_delete(array);
         return NULL;
     }
@@ -117,7 +124,7 @@ bool Array_insert(struct Array *array, void *object, size_t index) {
         return false;
     }
 
-    if (!Array_reserve(array, Array_count(array) + 1)) {
+    if (!Array_reserve_preemptively(array, Array_count(array) + 1)) {
         return false;
     }
 
@@ -156,20 +163,17 @@ bool Array_pop(struct Array *array) {
     return Array_remove(array, Array_count(array) - 1);
 }
 
-void Array_clear(struct Array *array) {
+bool Array_clear(struct Array *array) {
+    if (Array_is_empty(array)) {
+        return false;
+    }
+
     while (Array_pop(array));
+
+    return true;
 }
 
 bool Array_reserve(struct Array *array, size_t capacity) {
-    if (Array_capacity(array) >= capacity) {
-        return true;
-    }
-
-    size_t suggested = ArrayGrowthFactor * Array_capacity(array);
-    return Array_reserve_exactly(array, max(capacity, suggested));
-}
-
-bool Array_reserve_exactly(struct Array *array, size_t capacity) {
     if (Array_capacity(array) >= capacity) {
         return true;
     }
@@ -184,4 +188,15 @@ bool Array_reserve_exactly(struct Array *array, size_t capacity) {
     array->capacity = capacity;
 
     return true;
+}
+
+bool Array_reserve_preemptively(struct Array *array, size_t capacity) {
+    if (Array_capacity(array) >= capacity) {
+        return true;
+    }
+
+    size_t suggested = GrowthFactor * Array_capacity(array);
+    size_t chosen = max(capacity, suggested);
+
+    return Array_reserve(array, chosen);
 }

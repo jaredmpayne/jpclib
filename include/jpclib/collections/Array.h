@@ -34,10 +34,8 @@ bool Array_push(struct Array *array, void *object);
 
 bool Array_pop(struct Array *array);
 
-void Array_clear(struct Array *array);
+bool Array_clear(struct Array *array);
 
 bool Array_reserve(struct Array *array, size_t capacity);
-
-bool Array_reserve_exactly(struct Array *array, size_t capacity);
 
 #endif
