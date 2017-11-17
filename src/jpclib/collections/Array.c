@@ -29,19 +29,16 @@ struct Array *Array_new() {
 }
 
 struct Array *Array_with_capacity(size_t capacity) {
-    // Try to allocate a new Array.
     struct Array *array = malloc(sizeof(struct Array));
     if (!array) {
         return NULL;
     }
 
-    // Initialize the data members.
     array->functions = &ArrayFunctions;
     array->objects = NULL;
     array->count = 0;
     array->capacity = 0;
 
-    // Try to reserve exactly the requested capacity.
     if (!Array_reserve_exactly(array, capacity)) {
         Array_delete(array);
         return NULL;
@@ -51,13 +48,11 @@ struct Array *Array_with_capacity(size_t capacity) {
 }
 
 struct Array *Array_copy(const struct Array *array) {
-    // Try to create a new Array with capacity for the original's Objects.
     struct Array *copy = Array_with_capacity(Array_count(array));
     if (!array) {
         return NULL;
     }
 
-    // Try to push a copy of each of the original's Objects to the new Array.
     for (size_t i = 0; i < Array_count(array); ++i) {
         void *object = Object_copy(Array_at_unsafe(array, i));
         if (!object) {
@@ -65,7 +60,6 @@ struct Array *Array_copy(const struct Array *array) {
             return NULL;
         }
 
-        // This push can't fail. All allocations have already happened.
         Array_push(copy, object);
     }
 
@@ -79,12 +73,10 @@ void Array_delete(struct Array *array) {
 }
 
 bool Array_equals(const struct Array *array, const struct Array *other) {
-    // Fail if the Array counts are not equal.
     if (Array_count(array) != Array_count(other)) {
         return false;
     }
 
-    // Fail if any Objects at equal indices are not equal.
     for (size_t i = 0; i < Array_count(array); ++i) {
         struct Object *object1 = Array_at_unsafe(array, i);
         struct Object *object2 = Array_at_unsafe(other, i);
@@ -115,7 +107,6 @@ size_t Array_capacity(const struct Array *array) {
 }
 
 void *Array_at(const struct Array *array, size_t index) {
-    // Fail if the given index is out of bounds.
     if (index >= Array_count(array)) {
         return NULL;
     }
@@ -128,23 +119,19 @@ void *Array_at_unsafe(const struct Array *array, size_t index) {
 }
 
 bool Array_insert(struct Array *array, void *object, size_t index) {
-    // Fail if the given index is out of bounds.
     if (index > Array_count(array)) {
         return false;
     }
 
-    // Try to make sure the Array has room for at least one more Object.
     if (!Array_reserve(array, Array_count(array) + 1)) {
         return false;
     }
 
-    // Move the Objects from the destination point onward up one index.
     void **source = array->objects + index;
     void **destination = array->objects + index + 1;
     size_t size = sizeof(void *) * (Array_count(array) - index);
     memmove(destination, source, size);
 
-    // Insert the new Object.
     *source = object;
     ++array->count;
 
@@ -152,17 +139,14 @@ bool Array_insert(struct Array *array, void *object, size_t index) {
 }
 
 bool Array_remove(struct Array *array, size_t index) {
-    // Fail if the given index is out of range.
     if (index >= Array_count(array)) {
         return false;
     }
 
-    // Delete the Object.
     void **destination = array->objects + index;
     Object_delete(*destination);
     --array->count;
 
-    // Move the Objects past the removal point down one index.
     void **source = array->objects + index + 1;
     size_t size = sizeof(void *) * (Array_count(array) - index);
     memmove(destination, source, size);
@@ -183,30 +167,25 @@ void Array_clear(struct Array *array) {
 }
 
 bool Array_reserve(struct Array *array, size_t capacity) {
-    // Succeed if the Array already has a large enough capacity.
     if (Array_capacity(array) >= capacity) {
         return true;
     }
 
-    // Suggest a capacity and resize the Array to the greater of the two.
     size_t suggested = ArrayGrowthFactor * Array_capacity(array);
     return Array_reserve_exactly(array, max(capacity, suggested));
 }
 
 bool Array_reserve_exactly(struct Array *array, size_t capacity) {
-    // Succeed if the Array already has a large enough capacity.
     if (Array_capacity(array) >= capacity) {
         return true;
     }
 
-    // Try to reallocate the Object buffer.
     size_t size = sizeof(struct Object *) * capacity;
     void **objects = realloc(array->objects, size);
     if (!objects) {
         return false;
     }
 
-    // Set the new Object buffer and capacity.
     array->objects = objects;
     array->capacity = capacity;
 

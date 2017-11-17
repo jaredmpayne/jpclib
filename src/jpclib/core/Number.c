@@ -18,13 +18,11 @@ struct Number {
 };
 
 struct Number *Number_with_value(const void *value, size_t size) {
-    // Try to allocate a new Number.
     struct Number *number = malloc(sizeof(struct Number));
     if (!number) {
         return NULL;
     }
 
-    // Initialize the data members.
     number->functions = &NumberFunctions;
     memcpy(number->value, value, size);
 

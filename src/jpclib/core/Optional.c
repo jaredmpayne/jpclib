@@ -17,13 +17,11 @@ struct Optional {
 };
 
 struct Optional *Optional_none() {
-    // Try to allocate a new Optional.
     struct Optional *optional = malloc(sizeof(struct Optional));
     if (!optional) {
         return NULL;
     }
 
-    // Initialize the data members.
     optional->functions = &OptionalFunctions;
     optional->object = NULL;
     optional->is_some = false;
@@ -32,13 +30,11 @@ struct Optional *Optional_none() {
 }
 
 struct Optional *Optional_some(void *object) {
-    // Try to create a new empty Optional.
     struct Optional *optional = Optional_none();
     if (!optional) {
         return NULL;
     }
 
-    // Set the Optional to the given Object.
     Optional_set(optional, object);
 
     return optional;
@@ -65,23 +61,19 @@ bool Optional_is_none(const struct Optional *optional) {
 }
 
 void Optional_set(struct Optional *optional, void *object) {
-    // Reset the Optional if it already has an Object.
     if (Optional_is_some(optional)) {
         Optional_reset(optional);
     }
 
-    // Give the Optional the given Object.
     optional->object = object;
     optional->is_some = true;
 }
 
 void Optional_reset(struct Optional *optional) {
-    // Delete the Object if the Optional has one.
     if (Optional_is_some(optional)) {
         Object_delete(optional->object);
     }
 
-    // Reset the Optional's data members.
     optional->object = NULL;
     optional->is_some = false;
 }

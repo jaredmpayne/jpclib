@@ -22,17 +22,14 @@ struct SipHasher *SipHasher_new() {
 }
 
 struct SipHasher *SipHasher_with_keys(uint64_t k0, uint64_t k1) {
-    // Try to allocate a new SipHasher.
     struct SipHasher *hasher = malloc(sizeof(struct SipHasher));
     if (!hasher) {
         return NULL;
     }
 
-    // Initialize the data members.
     hasher->k0 = k0;
     hasher->k1 = k1;
 
-    // Reset the SipHasher values.
     SipHasher_reset(hasher);
 
     return hasher;
@@ -43,7 +40,7 @@ void SipHasher_delete(struct SipHasher *hasher) {
 }
 
 void SipHasher_reset(struct SipHasher *hasher) {
-    // XOR the keys with "somepseudorandomlygeneratedbytes".
+    // Hex is "somepseudorandomlygeneratedbytes".
     hasher->v0 = hasher->k0 ^ 0x736f6d6570736575;
     hasher->v1 = hasher->k1 ^ 0x646f72616e646f6d;
     hasher->v2 = hasher->k0 ^ 0x6c7967656e657261;

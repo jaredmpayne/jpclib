@@ -13,16 +13,13 @@ struct OsRng {
 };
 
 struct OsRng *OsRng_new() {
-    // Try to allocate a new OsRng.
     struct OsRng *rng = malloc(sizeof(struct OsRng));
     if (!rng) {
         return NULL;
     }
 
-    // Initialize the data members.
     rng->urandom = NULL;
 
-    // Try to open the file "/dev/urandom" for reading as a binary file.
     rng->urandom = fopen("/dev/urandom", "rb");
     if (!rng->urandom) {
         OsRng_delete(rng);
@@ -53,16 +50,13 @@ struct OsRng {
 };
 
 struct OsRng *OsRng_new() {
-    // Try to allocate a new OsRng.
     struct OsRng *rng = malloc(sizeof(struct OsRng));
     if (!rng) {
         return NULL;
     }
 
-    // Initialize the data members.
     rng->provider = NULL;
 
-    // Try to acquire a handle to a cryptographic service provider.
     if (!CryptAcquireContext(&provider, NULL, NULL, PROV_RSA_FULL, 0)) {
         OsRng_delete(rng);
         return NULL;

@@ -29,19 +29,16 @@ struct String *String_new() {
 }
 
 struct String *String_with_capacity(size_t capacity) {
-    // Try to allocate a new String.
     struct String *string = malloc(sizeof(struct String));
     if (!string) {
         return NULL;
     }
 
-    // Initialize the data members.
     string->functions = &StringFunctions;
     string->characters = NULL;
     string->count = 0;
     string->capacity = 0;
 
-    // Try to reserve exactly the requested capacity.
     if (!String_reserve_exactly(string, capacity)) {
         String_delete(string);
         return NULL;
@@ -51,15 +48,12 @@ struct String *String_with_capacity(size_t capacity) {
 }
 
 struct String *String_copy(const struct String *string) {
-    // Try to create a new String with capacity for the original's characters.
     struct String *copy = String_with_capacity(String_count(string));
     if (!copy) {
         return NULL;
     }
 
-    // Push each of the original's characters to the new String.
     for (size_t i = 0; i < String_count(string); ++i) {
-        // This push can't fail. All allocations have already happened.
         String_push(copy, String_at_unsafe(string, i));
     }
 
@@ -72,12 +66,10 @@ void String_delete(struct String *string) {
 }
 
 bool String_equals(const struct String *string, const struct String *other) {
-    // Fail if the String counts are not equal.
     if (String_count(string) != String_count(other)) {
         return false;
     }
 
-    // Fail if any characters at equal indices are not equal.
     for (size_t i = 0; i < String_count(string); ++i) {
         if (String_at_unsafe(string, i) != String_at_unsafe(other, i)) {
             return false;
@@ -108,7 +100,6 @@ size_t String_capacity(const struct String *string) {
 }
 
 char String_at(const struct String *string, size_t index) {
-    // Fail if the given index is out of bounds.
     if (index >= String_count(string)) {
         return NULL;
     }
@@ -121,23 +112,19 @@ char String_at_unsafe(const struct String *string, size_t index) {
 }
 
 bool String_insert(struct String *string, char character, size_t index) {
-    // Fail if the given index is out of bounds.
     if (index > String_count(string)) {
         return false;
     }
 
-    // Try to make sure the String has room for at least one more character.
     if (!String_reserve(string, String_count(string) + 1)) {
         return false;
     }
 
-    // Move the characters from the destination point onward up one index.
     char *source = string->characters + index;
     char *destination = string->characters + index + 1;
     size_t size sizeof(char) * String_count(string);
     memmove(destination, source, size);
 
-    // Insert the new character.
     *source = character;
     ++string->count;
 
@@ -145,12 +132,10 @@ bool String_insert(struct String *string, char character, size_t index) {
 }
 
 bool String_remove(struct String *string, size_t index) {
-    // Fail if the given index is out of range.
     if (index >= String_count(string)) {
         return false;
     }
 
-    // Move the characters past the removal point down one index.
     char *source = string->characters + index + 1;
     char *destination = string->characters + index;
     size_t size = sizeof(char) * (Array_count(string) - index + 1);
@@ -173,30 +158,25 @@ void String_clear(struct String *string) {
 }
 
 bool String_reserve(struct String *string, size_t capacity) {
-    // Succeed if the String already has a large enough capacity.
     if (String_capacity(string) >= capacity) {
         return true;
     }
 
-    // Suggest a capacity and resize the String to the greater of the two.
     size_t suggested = StringGrowthFactor * String_capacity(string);
     return String_reserve_exactly(string, max(capacity, suggested));
 }
 
 bool String_reserve_exactly(struct String *string, size_t capacity) {
-    // Succeed if the String already has a large enough capacity.
     if (String_capacity(string) >= capacity) {
         return true;
     }
 
-    // Try to reallocate the character buffer. Add one for the null character.
     size_t size = sizeof(char) * capacity + sizeof(char);
     char *characters = realloc(string->characters, size);
     if (!characters) {
         return false;
     }
 
-    // Set the new character buffer and capacity.
     string->characters = characters;
     string->capacity = capacity;
 
